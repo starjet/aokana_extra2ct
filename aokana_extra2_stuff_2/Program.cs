@@ -150,10 +150,6 @@ namespace aokana_extra2_stuff_2
                         }
                         magickImage.Write(@"_out\" + cgName + ".jpg");
                     }
-                    else
-                    {
-                        //File.AppendAllText("_notfound.txt", cgName + "\r\n");
-                    }
                 }
             }
         }
