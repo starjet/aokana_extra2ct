@@ -146,8 +146,7 @@ namespace aokana_extra2_stuff_2
                         for (int i = 2; i < cgVariants.Length; i++)
                         {
                             MagickImage variantPart = new MagickImage(GetCg(cgVariants[i] + ".webp"));
-                            magickImage.Composite(variantPart, CompositeOperator.Mathematics);
-                            magickImage.Composite(variantPart,CompositeOperator.Plus);
+                            magickImage.Composite(variantPart, CompositeOperator.Over);
                         }
                         magickImage.Write(@"_out\" + cgName + ".jpg");
                     }
