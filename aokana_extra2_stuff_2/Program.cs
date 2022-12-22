@@ -9,7 +9,6 @@ namespace aokana_extra2_stuff_2
 {
     internal class Program
     {
-        public static string path = "";
         public static FileStream fs;
         public static Dictionary<string, fe> ti = new Dictionary<string, fe>();
 
@@ -89,9 +88,21 @@ namespace aokana_extra2_stuff_2
             return array;
         }
 
+        public static byte[] GetCg(string fn)
+        {
+            byte[] cg = Data("evcg/en/" + fn);
+            cg ??= Data("evcg/" + fn);
+            cg ??= Data("evcg2/en/" + fn);
+            cg ??= Data("evcg2/" + fn);
+            cg ??= Data("evcg3/en/" + fn);
+            cg ??= Data("evcg3/" + fn);
+            cg ??= Data("hevcg/" + fn);
+            return cg;
+        }
+
         static void Main(string[] args)
         {
-            path = args[0];
+            string path = args[0];
             fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Position = 0L;
             byte[] array = new byte[1024];
@@ -112,11 +123,38 @@ namespace aokana_extra2_stuff_2
             foreach (string file in ti.Keys)
             {
                 Console.WriteLine(file);
-                System.IO.Directory.CreateDirectory(Path.GetDirectoryName(file));
+                Directory.CreateDirectory(Path.GetDirectoryName(file));
                 byte[] contents = Data(file);
                 if (contents != null)
                 {
                     File.WriteAllBytes(file, Data(file));
+                }
+            }
+            if (path.Contains("evcg.dat") || path.Contains("adult.dat"))
+            {
+                string[] cgList = File.ReadAllLines("vcglist.csv");
+                foreach (string cg in cgList)
+                {
+                    string[] cgVariants = cg.ToLower().Split(' ');
+                    string cgName = cgVariants[0];
+                    Console.WriteLine(cgName);
+                    byte[] baseImage = GetCg(cgVariants[1] + ".webp");
+                    Directory.CreateDirectory("_out");
+                    if (baseImage != null)
+                    {
+                        MagickImage magickImage = new MagickImage(baseImage);
+                        for (int i = 2; i < cgVariants.Length; i++)
+                        {
+                            MagickImage variantPart = new MagickImage(GetCg(cgVariants[i] + ".webp"));
+                            magickImage.Composite(variantPart, CompositeOperator.Mathematics);
+                            magickImage.Composite(variantPart,CompositeOperator.Plus);
+                        }
+                        magickImage.Write(@"_out\" + cgName + ".jpg");
+                    }
+                    else
+                    {
+                        //File.AppendAllText("_notfound.txt", cgName + "\r\n");
+                    }
                 }
             }
         }
