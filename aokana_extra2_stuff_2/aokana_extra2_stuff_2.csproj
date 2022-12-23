@@ -10,10 +10,14 @@
 
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="12.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="defs.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="faceinfo.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="vcglist.csv">
