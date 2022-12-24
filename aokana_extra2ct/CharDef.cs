@@ -1,4 +1,4 @@
-﻿namespace aokana_extra2_stuff_2
+﻿namespace aokana_extra2ct
 {
     internal class CharDef
     {
