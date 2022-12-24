@@ -4,10 +4,8 @@
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
-using System.Collections.ObjectModel;
 using System.Text;
 using ImageMagick;
-using Newtonsoft.Json;
 
 namespace aokana_extra2_stuff_2
 {
