@@ -304,7 +304,6 @@ namespace aokana_extra2_stuff_2
             string text = "";
             int num = charDef.face + 1;
             string fname = "";
-            //Console.WriteLine("test" + JsonConvert.SerializeObject(charDef));
             if (charDef.prefix != "sit")
             {
                 string text2 = "a";
@@ -391,32 +390,39 @@ namespace aokana_extra2_stuff_2
                     }
                 }
             }
-            if (path.Contains("sprites.dat") || path.Contains("adult.dat"))
+            if ((path.Contains("sprites.dat") || path.Contains("adult.dat")) && args.Length > 1)
             {
+                string prefix = args[1].ToLower();
                 Directory.CreateDirectory("_out_sprites");
                 InitFaceDefData("defs.txt", 1);
                 LoadCharDef();
                 List<string> sprites = new List<string>();
                 foreach (CharDef char1 in chars)
                 {
-                    foreach (char pose in char1.poselist)
+                    if (char1.prefix.Equals(prefix) || prefix.Equals("all"))
                     {
-                        for (int dist = 0; dist < 4; dist++)
+                        foreach (char pose in char1.poselist)
                         {
-                            IEnumerable<byte> outfits = char1.outfitS.Union(char1.outfitF);
-                            foreach (byte outfit in outfits)
+                            for (int dist = 0; dist < 4; dist++)
                             {
-                                char1.pose = Array.IndexOf(char1.poselist, pose);
-                                char1.distance = dist;
-                                List<byte> outfitList = pose <= 'B' ? char1.outfitS : char1.outfitF;
-                                char1.outfit = outfitList.IndexOf(outfit);
-                                if (char1.outfit > -1)
+                                IEnumerable<byte> outfits = char1.outfitS.Union(char1.outfitF);
+                                foreach (byte outfit in outfits)
                                 {
-                                    string sprite = UpdateSprite(char1);
-                                    if (sprite != "")
+                                    char1.pose = Array.IndexOf(char1.poselist, pose);
+                                    char1.distance = dist;
+                                    List<byte> outfitList = pose <= 'B' ? char1.outfitS : char1.outfitF;
+                                    int faceCount = pose <= 'B' ? char1.nfaceS : char1.nfaceF;
+                                    char1.outfit = outfitList.IndexOf(outfit);
+                                    for (int i = 0; i < faceCount && char1.outfit > -1; i++)
                                     {
-                                        sprites.Add(sprite);
+                                        char1.face = i;
+                                        string sprite = UpdateSprite(char1);
+                                        if (sprite != "")
+                                        {
+                                            sprites.Add(sprite);
+                                        }
                                     }
+
                                 }
                             }
                         }
@@ -439,20 +445,12 @@ namespace aokana_extra2_stuff_2
                             byte[] faceData = GetSprite(faceDef.id.ToLower() + ".webp");
                             if (faceData != null)
                             {
+                                Console.WriteLine(sprite.Replace('+', '_'));
                                 MagickImage faceImage = new MagickImage(faceData);
-                                //faceImage.Crop(faceDef.w, faceDef.h);
-                                //baseImage.Composite(faceImage, faceDef.x, faceDef.y, CompositeOperator.Over);
-                                //baseImage.Write(@"_out_sprites\" + sprite.Replace('+', '_') + ".png");
-                                //IReadOnlyCollection<IMagickImage<byte>> faceParts = faceImage.CropToTiles(faceDef.w, faceDef.h);
-                                //int i = 0;
-                                //foreach (IMagickImage<byte> face in faceParts)
-                                //{
-                                //    Console.WriteLine(sprite.Replace('+', '_') + (++i).ToString());
-                                //    //MagickImage baseImage = new MagickImage(baseData);
-                                //    //baseImage.Composite(face, faceDef.x, faceDef.y, CompositeOperator.Over);
-                                //    //baseImage.Write(@"_out_sprites\" + sprite.Replace('+', '_') + (++i).ToString() + ".png");
-                                //}
-                                Console.WriteLine(sprites.ToArray().Length);
+                                IMagickImage<byte> facePart = faceImage.CropToTiles(faceDef.w, faceDef.h).ToArray()[pos];
+                                MagickImage baseImage = new MagickImage(baseData);
+                                baseImage.Composite(facePart, faceDef.x, faceDef.y, CompositeOperator.Over);
+                                baseImage.Write(@"_out_sprites\" + sprite.Replace('+', '_') + ".png");
                             }
                         }
                     }
