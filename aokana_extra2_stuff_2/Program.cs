@@ -121,6 +121,14 @@ namespace aokana_extra2_stuff_2
         {
             byte[] sprite = Data("sprites/" + fn);
             sprite ??= Data("hsprites/" + fn);
+            if (File.Exists("sprites/" + fn))
+            {
+                sprite ??= File.ReadAllBytes("sprites/" + fn);
+            }
+            if (File.Exists("hsprites/" + fn))
+            {
+                sprite ??= File.ReadAllBytes("hsprites/" + fn);
+            }
             return sprite;
         }
 
@@ -366,7 +374,7 @@ namespace aokana_extra2_stuff_2
                     File.WriteAllBytes(file, Data(file));
                 }
             }
-            if (path.Contains("evcg.dat") || path.Contains("adult.dat"))
+            if ((path.Contains("evcg.dat") || path.Contains("adult.dat")) && args.Length > 1 && args[1].Equals("vcg"))
             {
                 Directory.CreateDirectory("_out_cgs");
                 string[] cgList = File.ReadAllLines("vcglist.csv");
@@ -388,7 +396,7 @@ namespace aokana_extra2_stuff_2
                     }
                 }
             }
-            if ((path.Contains("sprites.dat") || path.Contains("adult.dat")) && args.Length > 1)
+            if (path.Contains("sprites.dat") && args.Length > 1)
             {
                 string prefix = args[1].ToLower();
                 Directory.CreateDirectory("_out_sprites");
