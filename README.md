@@ -24,4 +24,6 @@ CGs will be written to `_out_cgs` and sprites will be written to `_out_sprites`
 If you're brave enough to process all sprites, make sure there's enough space (in the ballpark of 30 gigs at least, probably more),  
 and either a powerful CPU or a lot of time or both  
   
-(A good amount of code in this repo is copy/pasted from the game's assembly via dnspy; No guarantees of any proper functionality)
+*A good amount of code in this repo is copy/pasted from the game's assembly via dnspy; No guarantees of any proper functionality  
+  
+**Uses Magick.NET to produce complete CGs and sprites; By default, uses an OpenMP enabled variant that will hammer all CPU threads; Change as necessary
